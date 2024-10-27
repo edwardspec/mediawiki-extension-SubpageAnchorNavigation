@@ -1,0 +1,28 @@
+{
+	"name": "SubpageAnchorNavigation",
+	"version": "0.0.1",
+	"author": "Edward Chernenko",
+	"url": "https://www.mediawiki.org/wiki/Extension:SubpageAnchorNavigation",
+	"descriptionmsg": "subpageanchornavigation-desc",
+	"license-name": "GPL-2.0+",
+	"requires": {
+		"MediaWiki": ">= 1.39.0"
+	},
+	"type": "other",
+	"ExtensionMessagesFiles": {
+		"SubpageAnchorNavigationMagic": "SubpageAnchorNavigation.i18n.magic.php"
+	},
+	"AutoloadClasses": {
+		"MediaWiki\\SubpageAnchorNavigation\\Hooks": "includes/Hooks.php",
+		"MediaWiki\\SubpageAnchorNavigation\\NavigationTemplate": "includes/NavigationTemplate.php"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": "MediaWiki\\SubpageAnchorNavigation\\Hooks::onParserFirstCallInit"
+	},
+	"MessagesDirs": {
+		"SubpageAnchorNavigation": [
+			"i18n"
+		]
+	},
+	"manifest_version": 2
+}

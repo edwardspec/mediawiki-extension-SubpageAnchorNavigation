@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Edward Chernenko"
+		]
+	},
+
+	"subpageanchornavigation-desc": "Provides {{#subpage_anchor_navigation:}} syntax to autogenerate navigation templates."
+}
