@@ -14,10 +14,12 @@
 	},
 	"AutoloadClasses": {
 		"MediaWiki\\SubpageAnchorNavigation\\Hooks": "includes/Hooks.php",
-		"MediaWiki\\SubpageAnchorNavigation\\NavigationTemplate": "includes/NavigationTemplate.php"
+		"MediaWiki\\SubpageAnchorNavigation\\NavigationTemplate": "includes/NavigationTemplate.php",
+		"MediaWiki\\SubpageAnchorNavigation\\PageWithAnchors": "includes/PageWithAnchors.php"
 	},
 	"Hooks": {
-		"ParserFirstCallInit": "MediaWiki\\SubpageAnchorNavigation\\Hooks::onParserFirstCallInit"
+		"ParserFirstCallInit": "MediaWiki\\SubpageAnchorNavigation\\Hooks::onParserFirstCallInit",
+		"MultiContentSave": "MediaWiki\\SubpageAnchorNavigation\\Hooks::onMultiContentSave"
 	},
 	"MessagesDirs": {
 		"SubpageAnchorNavigation": [

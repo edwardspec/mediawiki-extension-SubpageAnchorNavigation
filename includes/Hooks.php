@@ -23,6 +23,7 @@
 
 namespace MediaWiki\SubpageAnchorNavigation;
 
+use MediaWiki\Revision\RenderedRevision;
 use Parser;
 use Title;
 
@@ -37,6 +38,21 @@ class Hooks {
 		$parser->setFunctionHook( 'subpage_anchor_navigation',
 			'\MediaWiki\SubpageAnchorNavigation\Hooks::parserFunction' );
 		return true;
+	}
+
+	/**
+	 * MultiContentSave hook handler.
+	 * Updates "which pages have which anchors" database after subpage has been edited.
+	 * @param RenderedRevision $renderedRevision
+	 * @return bool|void
+	 */
+	public static function onMultiContentSave( RenderedRevision $renderedRevision ) {
+		$pout = $renderedRevision->getRevisionParserOutput();
+		$anchors = PageWithAnchors::findAnchors( $pout );
+
+		if ( $anchors ) {
+			$pout->setPageProperty( 'nav_anchors', $anchors );
+		}
 	}
 
 	/**

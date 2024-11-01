@@ -41,35 +41,25 @@ class NavigationTemplate {
 		$ns = $title->getNamespace();
 
 		// Find all subpages of $title.
-		$subpageNames = $dbr->newSelectQueryBuilder()
-			->select( [ 'page_title' ] )
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [ 'page_title AS title', 'pp_value AS anchors' ] )
 			->from( 'page' )
+			->join( 'page_props', null, [ 'pp_page = page_id' ] )
 			->where( [
 				'page_namespace' => $ns,
 				'page_title ' . $dbr->buildLike( $title->getDBKey(), '/', $dbr->anyString() )
 			] )
 			->caller( __METHOD__ )
-			->fetchFieldValues();
+			->fetchResultSet();
 
-		if ( !$subpageNames ) {
-			// No subpages.
+		if ( $res->numRows() == 0 ) {
+			// None of the subpages have anchors.
 			return '';
 		}
 
 		$anchorsFound = []; // [ 'subpageName1' => [ anchorNumber1, anchorNumber2, ... ], ... ]
-		foreach ( $subpageNames as $subpageName ) {
-			$subpageTitle = Title::makeTitle( $ns, $subpageName );
-			$anchorNumbers = self::getSortedAnchorNumbers( $subpageTitle );
-			if ( !$anchorNumbers ) {
-				continue;
-			}
-
-			$anchorsFound[$subpageName] = $anchorNumbers;
-		}
-
-		if ( !$anchorsFound ) {
-			// None of the subpages have anchors.
-			return '';
+		foreach ( $res as $row ) {
+			$anchorsFound[$row->title] = explode( ',', $row->anchors );
 		}
 
 		// Sort subpages in the order of their anchor numbers.
@@ -82,7 +72,7 @@ class NavigationTemplate {
 		foreach ( $anchorsFound as $subpageName => $anchorNumbers ) {
 			foreach ( $anchorNumbers as $anchor ) {
 				$anchorTitle = Title::makeTitle( $ns, $subpageName, "pg$anchor" );
-				$links[] = Linker::link( $anchorTitle, (string)$anchor );
+				$links[] = Linker::link( $anchorTitle, $anchor );
 			}
 		}
 
@@ -91,33 +81,5 @@ class NavigationTemplate {
 			implode( ' ', $links )
 		);
 		return [ $resultHtml, 'isHTML' => true ];
-	}
-
-	/**
-	 * Find all anchor numbers (e.g. 123 if HTML of the page has <span id="pg123">) on the page $title.
-	 * Results are sorted from lower to higher number.
-	 * @param PageIdentity $title
-	 * @return int[]
-	 */
-	protected function getSortedAnchorNumbers( PageIdentity $title ) {
-		$services = MediaWikiServices::getInstance();
-		$content = $services->getWikiPageFactory()->newFromTitle( $title )->getContent();
-		if ( !$content ) {
-			return [];
-		}
-
-		// Parse the wikitext, but prohibit expansion of templates.
-		$pout = $services->getContentRenderer()->getParserOutput( $content, $title );
-		$html = $pout->getText();
-
-		$matches = null;
-		if ( !preg_match_all( '/id="pg([0-9]+)"/', $html, $matches ) ) {
-			return [];
-		}
-
-		$anchorNumbers = array_map( 'intval', $matches[1] );
-		sort( $anchorNumbers );
-
-		return $anchorNumbers;
 	}
 }

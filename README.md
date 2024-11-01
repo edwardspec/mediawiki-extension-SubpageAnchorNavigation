@@ -13,3 +13,15 @@ For example, if current page is A and it has 3 subpages:
 
 ... then using `{{#subpage_anchor_navigation:}}` on the page `A` will create 9 links,
 from pg1 to pg9, ordered by page number (in the example above, `A/D` before `A/C`).
+
+# Installation
+
+After installing this extension, run the following maintenance script in MediaWiki directory:
+```bash
+php maintenance/runScript.php extensions/SubpageAnchorNavigation/maintenance/recalculateAnchors.php
+```
+
+This script will populate the cache of "which pages have which anchors" for existing pages.
+
+You don't need to rerun this script later (if more anchors are added to pages),
+because the cache is automatically updated when the pages with anchors are modified.
