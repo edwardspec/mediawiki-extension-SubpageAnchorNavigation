@@ -1,3 +1,6 @@
+Archived: this functionality was moved into https://github.com/edwardspec/mediawiki-extension-PrevNextImageLinks (which has a better implementation).
+
+
 mediawiki-extension-SubpageAnchorNavigation
 ====================
 
